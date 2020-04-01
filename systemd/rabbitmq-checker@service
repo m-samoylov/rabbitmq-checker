@@ -1,0 +1,14 @@
+[Unit]
+Description=RabbitMQ Checker
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/rabbitmq/checker.conf
+ExecStart=/usr/bin/rabbitmq-checker
+KillMode=process
+Restart=always
+User=rabbitmq
+Group=rabbitmq
+
+[Install]
+WantedBy=multi-user.target
