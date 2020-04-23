@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net"
-	"net/http"
 	"os"
 	"time"
 
@@ -39,36 +38,14 @@ var (
 	date    = "unknown"
 	status  = &NodeStatus{}
 	config  *Config
-
-	//custom global Transport/Client for timeouts/keeaplives
-	netTransport *http.Transport
-	netClient    *http.Client
 )
 
 const (
 	keepAliveTimeout int = 60
 )
 
-func configureNetClient() {
-	netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout:   time.Duration(config.CheckFailTimeout) * time.Millisecond,
-			KeepAlive: time.Duration(keepAliveTimeout) * time.Second,
-			DualStack: true,
-		}).Dial,
-		//	IdleConnTimeout:   time.Duration(keepAliveTimeout) * time.Second,
-		DisableKeepAlives: false,
-	}
-
-	netClient = &http.Client{
-		Transport: netTransport,
-	}
-}
-
 func main() {
 	config = parseFlags()
-
-	configureNetClient()
 
 	go checker(status)
 

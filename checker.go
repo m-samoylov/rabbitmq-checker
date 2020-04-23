@@ -76,10 +76,12 @@ func checker(status *NodeStatus) {
 			req.Header.Set("Healthcheck", "rabbitmq-checker")
 			req.Header.Set("Authorization", fmt.Sprintf("Basic %s", config.RabbitMQBasicAuth))
 
+			netClient := http.Client{Timeout: time.Duration(config.CheckFailTimeout) * time.Millisecond}
 			resp, err := netClient.Do(req)
 
 			if err != nil {
 				log.Printf("Can't do netClient.Do(): %s", err.Error())
+				curStatus.NodeAvailable = false
 				*status = *curStatus
 			} else {
 
